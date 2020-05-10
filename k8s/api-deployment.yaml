@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: api
+  template:
+    metadata:
+      labels:
+        component: api
+    spec:
+      containers:
+        - name: api
+          image: harry1989/fibonacci-api
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PG_DATABASE
+              value: postgres
+            - name: PG_HOST
+              value: postgres-cluster-ip-service
+            - name: PG_PORT
+              value: "5432"
+            - name: PG_USER
+              value: postgres
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: "6379"
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password-secret
+                  key: PG_PASSWORD
